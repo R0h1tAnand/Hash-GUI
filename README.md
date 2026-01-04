@@ -96,21 +96,3 @@ This project is designed to be built for Windows.
     *The output installer will be located in the `dist` folder.*.
 
 ---
-
-## 💬 Community & Support
-
-Join our community to discuss, request features, or get help with setup.
-
-[**Join the Discord Server**](https://discord.gg/cpAFXhGtbN)
-
----
-
-## ☕ Support the Development
-
-If Hashcat Reactor helps you in your workflow or research, consider supporting the development.
-
-* **Bitcoin (BTC):** `bc1qwcnky8a8zwzc3kec9ptl8cwvr6lmudnzdejzc0`
-* **Monero (XMR):** `42RyienngNpVtGhBMBw8F6XTZwuky5V7R7dippJbhJgjKiBk75vKmeu7zJUznxSk5C6LsyYz2Cz2XJBttSXiWLuPUhRtTpa`
-* **Litecoin (LTC):** `ltc1qlc5glj4qva85rvqjs085ww6gtk55zm4kpvg4cg`
-
----
