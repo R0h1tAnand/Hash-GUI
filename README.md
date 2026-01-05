@@ -1,98 +1,159 @@
 # Hash-GUI
 
-**Hash-GUI** is a modern, high-performance GUI frontend for Hashcat, built to simplify the command-line experience into a visual dashboard with advanced analytics, job queuing, real-time monitoring, and intelligent attack automation.
+![Hash-GUI Logo](screenshots/hash_gui_logo.png)
 
-## 🚀 Features
+<div align="center">
 
-* **Real-time Dashboard**: Monitor hashrates, progress, and recovered hashes live via WebSockets.
-* **Remote Access**: Securely share your instance over the web via Zrok tunnels to control it remotely.
-    * *Security*: Supports optional username/password protection.
-* **Hash Extractor**: Extracts crackable hashes directly from Archives (7-Zip, etc.), Documents, Wallets, and System files.
-* **Job Queue System**: Queue up multiple attacks (Wordlist, Mask, Hybrid, etc.) and let Reactor process them sequentially automatically.
-* **Advanced Insights (PACK)**: Integrated Password Analysis and Cracking Kit implementation. Analyzes your cracked hashes to generate optimized masks, identify top password patterns, charsets, and entropy data.
-* **Smart Potfile Management**:
-    * **Pre-Crack Analysis**: Check target lists against your potfile *before* starting an attack to see what is already cracked.    
-* **Interactive Terminal**: Full pseudo-terminal (PTY) access to the underlying shell for manual overrides or running custom Hashcat commands directly from the GUI.
-* **Multi-Language Support**: Fully localized interface available in **English** and **Chinese (中文)**.
-* **Hardware Monitoring**: Real-time GPU temperature and power usage tracking.
-    * *Note: Power draw metrics currently support **NVIDIA GPUs** only via `nvidia-smi`.*
-* **Escrow Integration & Auto-Uploads**: 
-    * Built-in module to submit cracked hashes to remote escrow APIs (hashes.com).
-    * **Auto-Upload**: Automatically upload recovered hashes when a set threshold is reached (e.g., every 10 hashes). Features smart detection to match running sessions to the correct Hashes.com algorithm ID.
-* **Session History**: Tracks all past attacks, their configurations, and success rates for future reference.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-blue)](https://github.com/jjsvs/Hash-GUI)
+[![Version](https://img.shields.io/badge/version-1.0.0-green)](https://github.com/jjsvs/Hash-GUI/releases)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+
+**The Ultimate Professional Frontend for Hashcat**
+
+*Modernize your cracking workflow with real-time analytics, remote management, and intelligent automation.*
+
+[Report Bug](https://github.com/jjsvs/Hash-GUI/issues) · [Request Feature](https://github.com/jjsvs/Hash-GUI/issues)
+
+</div>
 
 ---
 
-## 📸 Screenshots
+## 📖 Overview
 
-| Dashboard | Insights & Analysis |
-|:---:|:---:|
-| ![Dashboard Screenshot](screenshots/dashboard.png) | ![Insights Screenshot](screenshots/insights.png) |
-| *Real-time monitoring and controls* | *Detailed password pattern analysis* |
+**Hash-GUI** is an enterprise-grade graphical interface designed to unlock the full potential of **Hashcat**. It bridges the gap between raw command-line power and user-friendly operation, offering a suite of tools for penetration testers, security researchers, and system administrators.
 
-| Queue Manager | Interactive Terminal |
-|:---:|:---:|
-| ![Queue Screenshot](screenshots/queue_manager.png) | ![Config panel Screenshot](screenshots/config_panel.png) |
-| *Automated job scheduling* | *access all the features* |
+Gone are the days of complex syntax and manual monitoring. Hash-GUI provides a centralized command center for all your password recovery tasks, featuring intelligent job queuing, automated reporting, and secure remote access.
 
-| Remote Access | Hash Extractor |
-|:---:|:---:|
-| ![Remote Access Screenshot](screenshots/remote_access.png) | ![Hash Extractor Screenshot](screenshots/hash_extractor.png) |
-| *Secure remote tunneling via Zrok* | *Extract hashes from files* |
+## ✨ Key Features
 
-| Auto-Upload Settings | |
-|:---:|:---:|
-| ![Auto Upload Screenshot](screenshots/auto_uploads.png) | |
-| *Automated submission to Escrow* | |
+### 🖥️ **Command Center Dashboard**
+Experience your cracking sessions in real-time. Visualize hashrates, temperature, fan speeds, and progress through dynamic graphs and live telemetry via WebSockets.
+
+### 🔗 **Secure Remote Access**
+Manage your rig from anywhere.
+- **Zrok Integration**: Built-in support for secure, tunneled remote access without exposing ports.
+- **Authentication**: Optional but recommended username/password protection for your remote sessions.
+
+### 🕵️ **Intelligent Analysis (PACK)**
+Don't just guess—analyze.
+- **Automated Insights**: Integrated **Password Analysis and Cracking Kit (PACK)** analyzes your potfile and recovered hashes.
+- **Optimized Masks**: Automatically generate highly efficient masks based on real-world patterns found in your cracked lists.
+
+### 📂 **Universal Hash Extractor**
+Simplify target preparation.
+- **File2John Support**: Extract crackable hashes directly from specialized files:
+    - **Archives**: 7-Zip, RAR, ZIP
+    - **Documents**: Office, PDF
+    - **Wallets**: Crypto wallets (Bitcoin, Ethereum, etc.)
+    - **System**: SSH keys, shadow files, etc.
+
+### 🤖 **Automated Workflows**
+- **Job Queue**: Stack multiple attacks (Wordlist -> Mask -> Hybrid) to run sequentially.
+- **Auto-Escrow**: Automatically upload recovered hashes to online escrow services (like Hashes.com) to monetize your compute power.
+- **Pre-Crack Audits**: Instantly check new target lists against your existing potfile to avoid redundant work.
+
+### 💻 **Power User Tools**
+- **Interactive Terminal**: Drop into a fully functional shell for manual Hashcat commands when you need total control.
+- **Hardware Monitoring**: Native integration with `nvidia-smi` for real-time GPU health tracking.
+- **Multi-Language**: Fully localized for **English** and **Chinese (中文)**.
 
 ---
 
-## 🛠 Prerequisites
+## 📸 Interface Tour
 
-* **Operating System**: Windows 10/11 (64-bit).
-* **Node.js**: Version 16.x or higher (LTS recommended).
-* **Build Tools**: You generally need C++ build tools for `node-pty` to compile.
-    * Run in an Admin PowerShell: `npm install --global --production windows-build-tools`.
-* **Hashcat Binaries**: You must provide your own Hashcat executables.
-* **Zrok (For Remote Access)**:
-    * To use the **Remote Access** feature, `zrok` must be installed on your system and available in your system path.
-    * You must have your zrok environment enabled using `zrok enable <token>`.
-	* Visit zrok's website for installation guide https://docs.zrok.io/docs/guides/install/
+| **Strategic Overview** | **Deep Analytics** |
+|:---:|:---:|
+| ![Dashboard](screenshots/dashboard.png)<br>_Real-time telemetry and session control_ | ![Insights](screenshots/insights.png)<br>_Pattern analysis and mask generation_ |
+
+| **Process Management** | **System Level Control** |
+|:---:|:---:|
+| ![Queue](screenshots/queue_manager.png)<br>_Automated job scheduling_ | ![Terminal](screenshots/config_panel.png)<br>_Direct shell access_ |
+
+| **Remote Operations** | **Digital Forensics** |
+|:---:|:---:|
+| ![Remote](screenshots/remote_access.png)<br>_Secure Zrok tunneling_ | ![Extractor](screenshots/hash_extractor.png)<br>_Extract hashes from files_ |
 
 ---
 
-## ⚙️ Installation & Build
+## 🚀 Getting Started
 
-This project is designed to be built for Windows.
+### Prerequisites
 
-1.  **Clone the repository**:
+*   **OS**: Linux (tested on Ubuntu/Debian) or Windows 10/11.
+*   **Runtime**: Node.js v16+ (LTS).
+*   **Core**: **Hashcat** v6.0+ installed and accessible.
+
+### Installation
+
+1.  **Clone the Repository**
     ```bash
     git clone https://github.com/jjsvs/Hash-GUI.git
     cd hash-gui
     ```
 
-2.  **Install Dependencies**:
+2.  **Install Dependencies**
     ```bash
     npm install
     ```
 
-3.  **Configure Hashcat**:
-    The application looks for Hashcat in a specific directory. You must place the binaries manually before building.
-    
-    1.  Create the folder structure inside the `backend` folder:
-        ```
-        backend/hashcat/
-        ```
-    2.  Download **Hashcat binaries** (v6.2.6 or higher) from the [official website](https://hashcat.net/hashcat/).
-    3.  Extract the contents (specifically the hashcat binary and its dependencies) into `backend/hashcat/`.
-    4.  Verify the path: `backend/hashcat/hashcat` or the appropriate binary for your platform should exist.
-	5.  V-7.1.2 is already included by default in the backend folder its upto you which version you want to use.
+3.  **Setup Backend Binaries**
+    Hash-GUI requires the backend binaries to be placed correctly:
+    *   **Linux**: Ensure `hashcat` is installed globally (`apt install hashcat`) OR place binaries in `backend/hashcat/`.
+    *   **Windows**: Download Hashcat binaries and extract them to `backend/hashcat/`.
 
-4.  **Build the Executable**:
-    This will compile the React frontend, the backend, and package everything into a `.exe` installer.
+4.  **Build & Run**
     ```bash
+    # For Development
+    npm start
+
+    # Build for Production (AppImage/Exe)
     npm run electron:build
     ```
-    *The output installer will be located in the `dist` folder.*.
 
 ---
+
+## ⚙️ Configuration
+
+The application is largely plug-and-play, but allows for deep customization:
+
+*   **Config Panel**: graphically configure almost every Hashcat flag (Attack Modes, Workload Profiles, Rules, Masks).
+*   **Resource Library**: Point the app to your wordlist/rule directory (e.g., `/usr/share/wordlists`) for easy access.
+
+---
+
+## 🖥️ Platform Specifics
+
+**Hash-GUI** is cross-platform, but setup varies slightly:
+
+| Feature | **Linux (🐧)** | **Windows (🪟)** |
+| :--- | :--- | :--- |
+| **Hashcat Binaries** | Uses system `hashcat` by default. Can fallback to `backend/hashcat/`. | **MUST** be placed in `backend/hashcat/hashcat.exe`. |
+| **John the Ripper** | Uses system paths (standard install). | Bundled binaries recommended in `backend/john/win32/`. |
+| **Permissions** | Ensure binaries are executable: `chmod +x backend/hashcat/hashcat.bin` | No special permissions usually required. |
+| **Build Artifact** | Generates `.AppImage` (portable). | Generates `.exe` (NSIS Installer). |
+| **Build Tools** | Standard `build-essential`. | Requires `windows-build-tools` for native modules. |
+
+---
+
+## 🤝 Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+---
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<div align="center">
+  <p>Built with ❤️ for the InfoSec Community</p>
+</div>

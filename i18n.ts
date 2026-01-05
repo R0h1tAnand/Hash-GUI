@@ -6,14 +6,14 @@ const resources = {
   en: {
     translation: {
       // App Shell
-      "app_title": "Reactor",
+      "app_title": "Hash-Gui",
       "nav_dashboard": "Dashboard",
       "nav_queue": "Queue",
       "nav_insights": "Insights (PACK)",
       "nav_escrow": "Escrow Jobs",
       "nav_config": "Configuration",
       "nav_terminal": "Terminal",
-      "nav_remote": "Remote Access", 
+      "nav_remote": "Remote Access",
       "nav_extractor": "Hash Extractor", // Added
       "bridge_connected": "Bridge Connected",
       "bridge_offline": "Bridge Offline",
@@ -109,7 +109,7 @@ const resources = {
       "log_ready": "ready_to_spawn...",
 
       // Interactive Terminal
-      "term_header": "REACTOR SHELL ACCESS",
+      "term_header": "HASH-GUI SHELL ACCESS",
       "term_locked": "LOCKED",
       "term_interactive": "INTERACTIVE",
       "term_lock_title": "Terminal Locked",
@@ -284,15 +284,15 @@ const resources = {
   },
   zh: {
     translation: {
-      "app_title": "Reactor",
+      "app_title": "Hash-Gui",
       "nav_dashboard": "仪表盘",
       "nav_queue": "任务队列",
       "nav_insights": "洞察 (PACK)",
       "nav_escrow": "托管任务",
       "nav_config": "配置",
       "nav_terminal": "终端",
-      "nav_remote": "远程访问", 
-      "nav_extractor": "哈希提取器", 
+      "nav_remote": "远程访问",
+      "nav_extractor": "哈希提取器",
       "bridge_connected": "桥接已连接",
       "bridge_offline": "桥接离线",
       "active_target": "当前目标",
@@ -385,7 +385,7 @@ const resources = {
       "log_waiting": "等待日志...",
       "log_ready": "准备就绪...",
 
-      "term_header": "Reactor Shell 访问",
+      "term_header": "Hash-Gui Shell 访问",
       "term_locked": "已锁定",
       "term_interactive": "交互式",
       "term_lock_title": "终端已锁定",
