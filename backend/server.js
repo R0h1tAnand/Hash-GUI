@@ -50,9 +50,13 @@ const PORT = 3001;
 const getJohnPath = () => {
     const platform = process.platform === 'win32' ? 'win32' : 'linux';
     if (IS_ELECTRON && RESOURCES_PATH) {
-        return path.join(RESOURCES_PATH, 'backend', 'john', platform);
+        const bundledPath = path.join(RESOURCES_PATH, 'backend', 'john', platform);
+        if (fs.existsSync(bundledPath)) return bundledPath;
     }
-    return path.join(__dirname, 'john', platform);
+    const localPath = path.join(__dirname, 'john', platform);
+    if (fs.existsSync(localPath)) return localPath;
+    
+    return null; // Return null to indicate using system PATH
 };
 
 // --- HELPER: HASH CLEANER ---
@@ -138,59 +142,75 @@ app.post('/api/tools/file2john', upload.single('file'), (req, res) => {
     const johnDir = getJohnPath();
     const type = req.body.type || 'auto';
     const filename = req.file.originalname.toLowerCase();
+    const isWin = process.platform === 'win32';
     
-    let exe = '';
+    let exc = '';
 
     // --- STANDARD MAPPING ---
     // Archives
-    if (type === 'zip' || (type === 'auto' && filename.endsWith('.zip'))) exe = 'zip2john.exe';
-    else if (type === '7z' || (type === 'auto' && filename.endsWith('.7z'))) exe = '7z2john.exe';
-    else if (type === 'rar' || (type === 'auto' && filename.endsWith('.rar'))) exe = 'rar2john.exe';
-    else if (type === 'dmg' || (type === 'auto' && filename.endsWith('.dmg'))) exe = 'dmg2john.exe';
+    if (type === 'zip' || (type === 'auto' && filename.endsWith('.zip'))) exc = 'zip2john';
+    else if (type === '7z' || (type === 'auto' && filename.endsWith('.7z'))) exc = '7z2john';
+    else if (type === 'rar' || (type === 'auto' && filename.endsWith('.rar'))) exc = 'rar2john';
+    else if (type === 'dmg' || (type === 'auto' && filename.endsWith('.dmg'))) exc = 'dmg2john';
     
     // Docs & Office
-    else if (type === 'office' || (type === 'auto' && (filename.endsWith('.docx') || filename.endsWith('.xlsx') || filename.endsWith('.doc') || filename.endsWith('.xls') || filename.endsWith('.ppt') || filename.endsWith('.pptx')))) exe = 'office2john/office2john.exe';
-    else if (type === 'pdf' || (type === 'auto' && filename.endsWith('.pdf'))) exe = 'pdf2john/pdf2john.exe';
-    else if (type === 'libreoffice' || (type === 'auto' && (filename.endsWith('.odt') || filename.endsWith('.ods') || filename.endsWith('.odp') || filename.endsWith('.odg')))) exe = 'libreoffice2john/libreoffice2john.exe';
-    else if (type === 'staroffice' || (type === 'auto' && (filename.endsWith('.sdc') || filename.endsWith('.sdw') || filename.endsWith('.sda') || filename.endsWith('.sdd')))) exe = 'staroffice2john/staroffice2john.exe';
+    else if (type === 'office' || (type === 'auto' && (filename.endsWith('.docx') || filename.endsWith('.xlsx') || filename.endsWith('.doc') || filename.endsWith('.xls') || filename.endsWith('.ppt') || filename.endsWith('.pptx')))) exc = isWin ? 'office2john/office2john' : 'office2john';
+    else if (type === 'pdf' || (type === 'auto' && filename.endsWith('.pdf'))) exc = isWin ? 'pdf2john/pdf2john' : 'pdf2john';
+    else if (type === 'libreoffice' || (type === 'auto' && (filename.endsWith('.odt') || filename.endsWith('.ods') || filename.endsWith('.odp') || filename.endsWith('.odg')))) exc = isWin ? 'libreoffice2john/libreoffice2john' : 'libreoffice2john';
+    else if (type === 'staroffice' || (type === 'auto' && (filename.endsWith('.sdc') || filename.endsWith('.sdw') || filename.endsWith('.sda') || filename.endsWith('.sdd')))) exc = isWin ? 'staroffice2john/staroffice2john' : 'staroffice2john';
     
     // Keys & Managers
-    else if (type === 'putty' || (type === 'auto' && filename.endsWith('.ppk'))) exe = 'putty2john.exe';
-    else if (type === 'pfx' || (type === 'auto' && filename.endsWith('.pfx'))) exe = 'pfx2john.exe';
-    else if (type === 'gpg' || (type === 'auto' && filename.endsWith('.gpg'))) exe = 'gpg2john.exe';
-    else if (type === 'keepass' || (type === 'auto' && filename.endsWith('.kdbx'))) exe = 'keepass2john.exe';
-    else if (type === 'ssh' || (type === 'auto' && filename.includes('id_rsa'))) exe = 'ssh2john.exe';
-    else if (type === 'keychain' || (type === 'auto' && (filename.endsWith('.keychain') || filename.endsWith('.keychain-db')))) exe = 'keychain2john/keychain2john.exe';
-    else if (type === 'keyring' || (type === 'auto' && filename.endsWith('.keyring'))) exe = 'keyring2john/keyring2john.exe';
-    else if (type === 'keystore' || (type === 'auto' && (filename.endsWith('.jks') || filename.endsWith('.keystore')))) exe = 'keystore2john/keystore2john.exe';
+    else if (type === 'putty' || (type === 'auto' && filename.endsWith('.ppk'))) exc = 'putty2john';
+    else if (type === 'pfx' || (type === 'auto' && filename.endsWith('.pfx'))) exc = 'pfx2john';
+    else if (type === 'gpg' || (type === 'auto' && filename.endsWith('.gpg'))) exc = 'gpg2john';
+    else if (type === 'keepass' || (type === 'auto' && filename.endsWith('.kdbx'))) exc = 'keepass2john';
+    else if (type === 'ssh' || (type === 'auto' && filename.includes('id_rsa'))) exc = 'ssh2john';
+    else if (type === 'keychain' || (type === 'auto' && (filename.endsWith('.keychain') || filename.endsWith('.keychain-db')))) exc = isWin ? 'keychain2john/keychain2john' : 'keychain2john';
+    else if (type === 'keyring' || (type === 'auto' && filename.endsWith('.keyring'))) exc = isWin ? 'keyring2john/keyring2john' : 'keyring2john';
+    else if (type === 'keystore' || (type === 'auto' && (filename.endsWith('.jks') || filename.endsWith('.keystore')))) exc = isWin ? 'keystore2john/keystore2john' : 'keystore2john';
     
     // Wallets & Crypto
-    else if (type === 'ethereum') exe = 'ethereum2john/ethereum2john.exe';
-    else if (type === 'monero' || (type === 'auto' && filename.endsWith('.keys'))) exe = 'monero2john/monero2john.exe';
-    else if (type === 'electrum' || (type === 'auto' && (filename.includes('electrum') || filename === 'default_wallet'))) exe = 'electrum2john/electrum2john.exe';
-    else if (type === 'bitlocker') exe = 'bitlocker2john.exe';
+    else if (type === 'ethereum') exc = isWin ? 'ethereum2john/ethereum2john' : 'ethereum2john';
+    else if (type === 'monero' || (type === 'auto' && filename.endsWith('.keys'))) exc = isWin ? 'monero2john/monero2john' : 'monero2john';
+    else if (type === 'electrum' || (type === 'auto' && (filename.includes('electrum') || filename === 'default_wallet'))) exc = isWin ? 'electrum2john/electrum2john' : 'electrum2john';
+    else if (type === 'bitlocker') exc = 'bitlocker2john';
 
     // System
-    else if (type === 'telegram' || (type === 'auto' && (filename.includes('map') || filename.includes('telegram')))) exe = 'telegram2john/telegram2john.exe';
-    else if (type === 'android' || (type === 'auto' && filename.endsWith('.ab'))) exe = 'androidbackup2john.exe';
-    else if (type === 'mozilla' || (type === 'auto' && filename === 'key4.db')) exe = 'mozilla2john/mozilla2john.exe';
-    else if (type === 'itunes' || (type === 'auto' && filename === 'manifest.plist')) exe = 'itunes_backup2john.exe';
-    else if (type === 'filezilla' || (type === 'auto' && (filename.includes('filezilla') || (filename.endsWith('.xml') && filename.includes('server'))))) exe = 'filezilla2john/filezilla2john.exe';
+    else if (type === 'telegram' || (type === 'auto' && (filename.includes('map') || filename.includes('telegram')))) exc = isWin ? 'telegram2john/telegram2john' : 'telegram2john';
+    else if (type === 'android' || (type === 'auto' && filename.endsWith('.ab'))) exc = 'androidbackup2john';
+    else if (type === 'mozilla' || (type === 'auto' && filename === 'key4.db')) exc = isWin ? 'mozilla2john/mozilla2john' : 'mozilla2john';
+    else if (type === 'itunes' || (type === 'auto' && filename === 'manifest.plist')) exc = 'itunes_backup2john';
+    else if (type === 'filezilla' || (type === 'auto' && (filename.includes('filezilla') || (filename.endsWith('.xml') && filename.includes('server'))))) exc = isWin ? 'filezilla2john/filezilla2john' : 'filezilla2john';
 
-    else if (type === 'apex' || (type === 'auto' && filename.includes('apex'))) exe = 'apex2john/apex2john.exe';
-    else if (type === 'applenotes' || (type === 'auto' && (filename.includes('notestore') || filename.endsWith('.sqlite')))) exe = 'applenotes2john/applenotes2john.exe';
-    else if (type === 'aruba' || (type === 'auto' && (filename.includes('aruba') || filename.endsWith('.cfg')))) exe = 'aruba2john/aruba2john.exe';
-    else if (type === 'money' || (type === 'auto' && filename.endsWith('.mny'))) exe = 'money2john/money2john.exe';
-    else if (type === 'neo' || (type === 'auto' && (filename.endsWith('.wlt') || filename.endsWith('.db3')))) exe = 'neo2john/neo2john.exe';
-    else if (type === 'padlock' || (type === 'auto' && filename.endsWith('.padlock'))) exe = 'padlock2john/padlock2john.exe';
+    else if (type === 'apex' || (type === 'auto' && filename.includes('apex'))) exc = isWin ? 'apex2john/apex2john' : 'apex2john';
+    else if (type === 'applenotes' || (type === 'auto' && (filename.includes('notestore') || filename.endsWith('.sqlite')))) exc = isWin ? 'applenotes2john/applenotes2john' : 'applenotes2john';
+    else if (type === 'aruba' || (type === 'auto' && (filename.includes('aruba') || filename.endsWith('.cfg')))) exc = isWin ? 'aruba2john/aruba2john' : 'aruba2john';
+    else if (type === 'money' || (type === 'auto' && filename.endsWith('.mny'))) exc = isWin ? 'money2john/money2john' : 'money2john';
+    else if (type === 'neo' || (type === 'auto' && (filename.endsWith('.wlt') || filename.endsWith('.db3')))) exc = isWin ? 'neo2john/neo2john' : 'neo2john';
+    else if (type === 'padlock' || (type === 'auto' && filename.endsWith('.padlock'))) exc = isWin ? 'padlock2john/padlock2john' : 'padlock2john';
 
-    if (!exe) return res.status(400).json({ message: 'Unsupported file type.' });
+    if (!exc) return res.status(400).json({ message: 'Unsupported file type.' });
 
-    const binaryPath = path.join(johnDir, exe);
-    
-    if (!fs.existsSync(binaryPath)) {
-        return res.status(500).json({ message: 'Binary not found', details: binaryPath });
+    // Append .exe only for Windows
+    if (isWin && !exc.endsWith('.exe')) exc += '.exe';
+
+    let binaryPath = exc;
+    if (johnDir) {
+        binaryPath = path.join(johnDir, exc);
+         if (!fs.existsSync(binaryPath)) {
+            // Try fallback to just executable name if not found in johnDir (optional safety)
+             if (!johnDir) binaryPath = exc;
+             else return res.status(500).json({ message: 'Binary not found', details: binaryPath });
+        }
+    } else {
+        // Linux System Path: Just use the executable name
+        binaryPath = exc;
     }
+
+    // On Linux/Mac with py scripts, might need python invoked if they are .py files
+    // But commonly they are installed as binaries or shebanged scripts in /usr/bin.
+    // NOTE: Some tools like office2john might be python scripts.
+    // For this simple port, we assume they are in PATH and executable.
 
     const proc = spawn(binaryPath, [req.file.path]);
     let stdout = '';
@@ -203,6 +223,7 @@ app.post('/api/tools/file2john', upload.single('file'), (req, res) => {
         setTimeout(() => { try { fs.unlinkSync(req.file.path); } catch(e) {} }, 500);
 
         if (!stdout && stderr) {
+            // Some tools output help to stderr on error
             if (stdout.length < 5) return res.status(500).json({ message: 'Extraction failed', details: stderr });
         }
 
@@ -221,7 +242,7 @@ app.post('/api/tools/file2john', upload.single('file'), (req, res) => {
     });
     
     proc.on('error', (err) => {
-        res.status(500).json({ message: 'Spawn error', error: err.message });
+        res.status(500).json({ message: 'Spawn error (missing dependency?)', error: err.message });
     });
 });
 
