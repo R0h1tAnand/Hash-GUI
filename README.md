@@ -5,15 +5,15 @@
 <div align="center">
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-blue)](https://github.com/jjsvs/Hash-GUI)
-[![Version](https://img.shields.io/badge/version-1.0.0-green)](https://github.com/jjsvs/Hash-GUI/releases)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows-blue)](https://github.com/R0h1tAnand/Hash-GUI)
+[![Version](https://img.shields.io/badge/version-1.0.0-green)](https://github.com/R0h1tAnand/Hash-GUI/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 
 **The Ultimate Professional Frontend for Hashcat**
 
 *Modernize your cracking workflow with real-time analytics, remote management, and intelligent automation.*
 
-[Report Bug](https://github.com/jjsvs/Hash-GUI/issues) · [Request Feature](https://github.com/jjsvs/Hash-GUI/issues)
+[Report Bug](https://github.com/R0h1tAnand/Hash-GUI/issues) · [Request Feature](https://github.com/R0h1tAnand/Hash-GUI/issues)
 
 </div>
 
@@ -88,7 +88,7 @@ Simplify target preparation.
 
 1.  **Clone the Repository**
     ```bash
-    git clone https://github.com/jjsvs/Hash-GUI.git
+    git clone https://github.com/R0h1tAnand/Hash-GUI.git
     cd hash-gui
     ```
 
