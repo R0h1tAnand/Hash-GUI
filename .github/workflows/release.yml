@@ -104,11 +104,65 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          VERSION="${{ steps.get_version.outputs.version }}"
+          cat > release_notes.md << 'EOF'
+          # Hash-GUI ${{ steps.get_version.outputs.version }}
+          
+          🔐 **GUI frontend for Hashcat** - Professional password recovery and hash cracking interface
+          
+          ## What's New
+          
+          - Auto-released from version in package.json
+          - Built and tested automatically via GitHub Actions
+          - Full cross-platform support (Windows & Linux)
+          
+          ## Features
+          
+          - 🎨 **Modern UI** - Beautiful, intuitive interface for Hashcat
+          - ⚡ **Real-time Monitoring** - Live progress tracking and GPU statistics
+          - 🔧 **Advanced Controls** - Full access to Hashcat's powerful features
+          - 📊 **Performance Graphs** - Visual representation of cracking speed and hardware usage
+          - 🌍 **Multi-language** - i18n support for global users
+          - 🔌 **Backend Integration** - Seamless hashcat/john the ripper integration
+          
+          ## Installation
+          
+          ### Linux (x86_64)
+          
+          ```bash
+          # Download and make executable
+          wget https://github.com/R0h1tAnand/Hash-GUI/releases/download/${{ steps.get_version.outputs.version }}/Hash-GUI-$(echo ${{ steps.get_version.outputs.version }} | sed 's/v//').AppImage
+          chmod +x Hash-GUI-*.AppImage
+          
+          # Run the application
+          ./Hash-GUI-*.AppImage
+          ```
+          
+          ### Windows (x86_64)
+          
+          Download `Hash-GUI.Setup.$(echo ${{ steps.get_version.outputs.version }} | sed 's/v//').exe` and run the installer.
+          
+          ## Usage
+          
+          1. Launch Hash-GUI
+          2. Select your hash type and attack mode
+          3. Configure your wordlists or masks
+          4. Monitor real-time progress
+          5. View recovered hashes in the results panel
+          
+          ---
+          
+          **Full Changelog**: https://github.com/R0h1tAnand/Hash-GUI/commits/${{ steps.get_version.outputs.version }}
+          EOF
+          
       - name: Create or Update Release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Remove debug/build files that shouldn't be in release
+          # Remove debug/build files
           find artifacts -name "builder-debug.yml" -delete
           find artifacts -name "builder-effective-config.yaml" -delete
           find artifacts -name "*-unpacked" -type d -exec rm -rf {} + 2>/dev/null || true
@@ -120,11 +174,9 @@ jobs:
           fi
           
           echo "Creating release ${{ steps.get_version.outputs.version }}..."
+          # Only upload the main installers (hide .yml and .blockmap from release assets)
           gh release create ${{ steps.get_version.outputs.version }} \
             artifacts/linux/*.AppImage \
-            artifacts/linux/*.yml \
             artifacts/windows/*.exe \
-            artifacts/windows/*.blockmap \
-            artifacts/windows/*.yml \
-            --title "Release ${{ steps.get_version.outputs.version }}" \
-            --generate-notes
+            --title "Hash-GUI ${{ steps.get_version.outputs.version }}" \
+            --notes-file release_notes.md
