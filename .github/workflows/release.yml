@@ -4,13 +4,13 @@ on:
   push:
     branches:
       - main
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
 
@@ -21,52 +21,104 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
+
+      - name: Setup Python (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libarchive-tools
 
       - name: Install Dependencies
         run: |
-          npm install
+          npm ci
           cd backend
-          npm install
+          npm ci
+          cd ..
+
+      - name: Rebuild native modules
+        run: npm run rebuild
 
       - name: Build Application
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          npm run electron:build
+        run: npm run electron:build
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-artifacts
-          path: dist/*
-          if-no-files-found: warn
+          name: ${{ matrix.os }}-build
+          path: |
+            dist/*.AppImage
+            dist/*.exe
+            dist/*.blockmap
+            dist/*.yaml
+            dist/*.yml
+          if-no-files-found: error
 
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download Linux Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ubuntu-latest-artifacts
-          path: dist
+          name: ubuntu-latest-build
+          path: artifacts/linux
 
       - name: Download Windows Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: windows-latest-artifacts
-          path: dist
+          name: windows-latest-build
+          path: artifacts/windows
 
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: |
-            dist/*.AppImage
-            dist/*.exe
-            dist/*.blockmap
-          generate_release_notes: true
+      - name: Get version from package.json
+        id: get_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=v${VERSION}" >> $GITHUB_OUTPUT
+          echo "Version: v${VERSION}"
+
+      - name: Check if release exists
+        id: check_release
+        run: |
+          if gh release view ${{ steps.get_version.outputs.version }} > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or Update Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ steps.check_release.outputs.exists }}" = "true" ]; then
+            echo "Release ${{ steps.get_version.outputs.version }} already exists, uploading new artifacts..."
+            gh release upload ${{ steps.get_version.outputs.version }} \
+              artifacts/linux/* \
+              artifacts/windows/* \
+              --clobber
+          else
+            echo "Creating new release ${{ steps.get_version.outputs.version }}..."
+            gh release create ${{ steps.get_version.outputs.version }} \
+              artifacts/linux/* \
+              artifacts/windows/* \
+              --title "Release ${{ steps.get_version.outputs.version }}" \
+              --generate-notes
+          fi
