@@ -109,16 +109,12 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [ "${{ steps.check_release.outputs.exists }}" = "true" ]; then
-            echo "Release ${{ steps.get_version.outputs.version }} already exists, uploading new artifacts..."
-            gh release upload ${{ steps.get_version.outputs.version }} \
-              artifacts/linux/* \
-              artifacts/windows/* \
-              --clobber
-          else
-            echo "Creating new release ${{ steps.get_version.outputs.version }}..."
-            gh release create ${{ steps.get_version.outputs.version }} \
-              artifacts/linux/* \
-              artifacts/windows/* \
-              --title "Release ${{ steps.get_version.outputs.version }}" \
-              --generate-notes
+            echo "Release ${{ steps.get_version.outputs.version }} already exists, deleting old artifacts..."
+            gh release delete ${{ steps.get_version.outputs.version }} --yes || true
           fi
+          echo "Creating release ${{ steps.get_version.outputs.version }}..."
+          gh release create ${{ steps.get_version.outputs.version }} \
+            artifacts/linux/* \
+            artifacts/windows/* \
+            --title "Release ${{ steps.get_version.outputs.version }}" \
+            --generate-notes
