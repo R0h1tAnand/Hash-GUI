@@ -108,13 +108,23 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Remove debug/build files that shouldn't be in release
+          find artifacts -name "builder-debug.yml" -delete
+          find artifacts -name "builder-effective-config.yaml" -delete
+          find artifacts -name "*-unpacked" -type d -exec rm -rf {} + 2>/dev/null || true
+          
           if [ "${{ steps.check_release.outputs.exists }}" = "true" ]; then
-            echo "Release ${{ steps.get_version.outputs.version }} already exists, deleting old artifacts..."
-            gh release delete ${{ steps.get_version.outputs.version }} --yes || true
+            echo "Release ${{ steps.get_version.outputs.version }} already exists, deleting..."
+            gh release delete ${{ steps.get_version.outputs.version }} --yes --cleanup-tag
+            sleep 5
           fi
+          
           echo "Creating release ${{ steps.get_version.outputs.version }}..."
           gh release create ${{ steps.get_version.outputs.version }} \
-            artifacts/linux/* \
-            artifacts/windows/* \
+            artifacts/linux/*.AppImage \
+            artifacts/linux/*.yml \
+            artifacts/windows/*.exe \
+            artifacts/windows/*.blockmap \
+            artifacts/windows/*.yml \
             --title "Release ${{ steps.get_version.outputs.version }}" \
             --generate-notes
