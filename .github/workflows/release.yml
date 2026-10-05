@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-2022]
 
     steps:
       - name: Checkout code
@@ -113,7 +113,7 @@ jobs:
       - name: Download Windows Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: windows-latest-build
+          name: windows-2022-build
           path: artifacts/windows
 
       - name: Get version from package.json
