@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Setup Python (Windows)
@@ -30,21 +30,50 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Install Visual Studio Build Tools (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          npm install --global --prefer-online node-gyp
+          npm config set msvs_version 2022
+
       - name: Install system dependencies (Ubuntu)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y libarchive-tools
 
-      - name: Install Dependencies
+      - name: Install Dependencies (Linux)
+        if: runner.os == 'Linux'
         run: |
           npm ci
           cd backend
           npm ci
           cd ..
 
-      - name: Rebuild native modules
+      - name: Install Dependencies (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        env:
+          npm_config_msvs_version: '2022'
+          npm_config_python: python
+        run: |
+          npm ci --ignore-scripts
+          cd backend
+          npm ci --ignore-scripts
+          cd ..
+
+      - name: Rebuild native modules (Linux)
+        if: runner.os == 'Linux'
         run: npm run rebuild
+
+      - name: Rebuild native modules (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        env:
+          npm_config_msvs_version: '2022'
+        run: |
+          npx electron-rebuild -f -w node-pty
 
       - name: Build Application
         env:
@@ -62,6 +91,7 @@ jobs:
             dist/*.yaml
             dist/*.yml
           if-no-files-found: error
+
 
   release:
     needs: build
