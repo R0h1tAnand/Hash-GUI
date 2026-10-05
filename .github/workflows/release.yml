@@ -35,7 +35,15 @@ jobs:
         shell: powershell
         run: |
           npm install --global --prefer-online node-gyp
-          npm config set msvs_version 2022
+          # Find the VS installation path (works for VS 2022 and VS 2026)
+          $vsPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath 2>$null
+          if (-not $vsPath) {
+            $vsPath = "C:\Program Files\Microsoft Visual Studio\18\Enterprise"
+          }
+          echo "VS Path: $vsPath"
+          echo "VCINSTALLDIR=$vsPath\VC\" >> $env:GITHUB_ENV
+          echo "GYP_MSVS_OVERRIDE_PATH=$vsPath" >> $env:GITHUB_ENV
+          echo "GYP_MSVS_VERSION=2022" >> $env:GITHUB_ENV
 
       - name: Install system dependencies (Ubuntu)
         if: runner.os == 'Linux'
@@ -57,6 +65,7 @@ jobs:
         env:
           npm_config_msvs_version: '2022'
           npm_config_python: python
+          GYP_MSVS_VERSION: '2022'
         run: |
           npm ci --ignore-scripts
           cd backend
@@ -72,6 +81,7 @@ jobs:
         shell: powershell
         env:
           npm_config_msvs_version: '2022'
+          GYP_MSVS_VERSION: '2022'
         run: |
           npx electron-rebuild -f -w node-pty
 
