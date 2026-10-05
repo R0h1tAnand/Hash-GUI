@@ -1,6 +1,6 @@
 {
   "name": "hash-gui",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Hash-GUI (GUI frontend for Hashcat)",
   "main": "electron.js",
   "scripts": {
@@ -69,7 +69,7 @@
     },
     "linux": {
       "target": "AppImage",
-      "icon": "build/icon.png",
+      "icon": "build/icons",
       "category": "Utility"
     }
   }

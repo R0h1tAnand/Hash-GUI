@@ -111,6 +111,8 @@ jobs:
           cat > release_notes.md << 'EOF'
           # Hash-GUI ${{ steps.get_version.outputs.version }}
           
+          > This release includes AppStream metadata and properly sized icons for AppImage catalog compatibility.
+          
           🔐 **GUI frontend for Hashcat** - Professional password recovery and hash cracking interface
           
           ## What's New

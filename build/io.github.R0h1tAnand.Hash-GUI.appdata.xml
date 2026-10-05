@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.R0h1tAnand.Hash-GUI</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>Hash-GUI</name>
+  <summary>A cross-platform GUI client for Hashcat</summary>
+  <description>
+    <p>
+      Hash-GUI is a modern, feature-rich graphical user interface for Hashcat —
+      the world's fastest and most advanced password recovery utility.
+      It supports both Windows and Linux and provides a clean, intuitive workflow
+      for managing hash cracking sessions.
+    </p>
+    <p>Features include:</p>
+    <ul>
+      <li>Modern UI with real-time progress monitoring</li>
+      <li>Live GPU statistics and performance graphs</li>
+      <li>Full access to Hashcat attack modes and options</li>
+      <li>Integrated terminal with session management</li>
+      <li>Multi-language (i18n) support</li>
+      <li>Seamless Hashcat and John the Ripper backend integration</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">hash-gui.desktop</launchable>
+  <url type="homepage">https://github.com/R0h1tAnand/Hash-GUI</url>
+  <url type="bugtracker">https://github.com/R0h1tAnand/Hash-GUI/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Hash-GUI main interface</caption>
+      <image>https://raw.githubusercontent.com/R0h1tAnand/Hash-GUI/main/screenshots/dashboard.png</image>
+    </screenshot>
+  </screenshots>
+  <categories>
+    <category>Utility</category>
+    <category>Security</category>
+  </categories>
+  <keywords>
+    <keyword>hashcat</keyword>
+    <keyword>hash</keyword>
+    <keyword>password</keyword>
+    <keyword>cracking</keyword>
+    <keyword>security</keyword>
+    <keyword>forensics</keyword>
+  </keywords>
+  <releases>
+    <release version="1.0.5" date="2026-10-06"/>
+    <release version="1.0.4" date="2026-01-09"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+  <developer_name>Rohit Anand</developer_name>
+  <update_contact>https://github.com/R0h1tAnand</update_contact>
+</component>
